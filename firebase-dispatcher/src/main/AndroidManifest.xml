@@ -1,0 +1,14 @@
+<manifest package="com.batch.android.dispatcher.firebase"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name="com.batch.android.eventdispatcher.DispatcherDiscoveryService"
+            android:exported="false">
+            <meta-data
+                android:name="com.batch.android.eventdispatcher:com.batch.android.dispatcher.firebase.FirebaseRegistrar"
+                android:value="com.batch.android.eventdispatcher.DispatcherRegistrar" />
+        </service>
+    </application>
+
+</manifest>

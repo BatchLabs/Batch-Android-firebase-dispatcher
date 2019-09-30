@@ -1,0 +1,153 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+def propFile = project.rootProject.file("maven.properties")
+Properties props = new Properties()
+if (propFile.exists()) {
+    props.load(propFile.newDataInputStream())
+    allprojects {
+        ext."signing.password" = props.getProperty("batch.maven.central.signing.password", "")
+    }
+}
+
+def signingFile = project.rootProject.file("batch-maven-secret-gpg.key")
+if (signingFile.exists()) {
+    allprojects {
+        ext."signing.keyId" = "561B6D31"
+        ext."signing.secretKeyRingFile" = signingFile.getAbsolutePath()
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.getCompileClasspath()
+        }
+    }
+    exclude '**/R.html', '**/R.*.html', '**/index.html'
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    archiveClassifier.set("javadoc")
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+    publications {
+        firebasedispatcher(MavenPublication) {
+
+            groupId mavenGroupId
+            artifactId mavenArtifact
+            version android.defaultConfig.versionName
+
+            artifact "$buildDir/outputs/aar/firebase-dispatcher-release.aar"
+            artifact androidJavadocsJar
+            artifact androidSourcesJar
+
+            pom {
+                name = "Batch.com Android Firebase Dispatcher"
+                packaging = "aar"
+                description = "Batch.com's Android Firebase Dispatcher main artifact"
+                url = "https://batch.com"
+
+                scm {
+                    url = "https://github.com/BatchLabs/android-firebase-dispatcher"
+                    connection = "scm:git:https://github.com/BatchLabs/android-firebase-dispatcher.git"
+                    developerConnection = "scm:git:https://github.com/BatchLabs/android-firebase-dispatcher.git"
+                }
+
+                licenses {
+                    license {
+                        name = "Copyright (c) 2014-Present, Batch.com"
+                        distribution = "repo"
+                        comments = "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n" +
+                                "\n" +
+                                "- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n" +
+                                "- Use of copies, substantial portions or binaries contained within Batch's SDK is only permitted to enable use of the Batch platform.\n" +
+                                "\n" +
+                                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = "batch-tech"
+                        name = "Batch.com Tech"
+                    }
+                }
+
+                organization {
+                    name = "Batch.com"
+                    url = "https://batch.com"
+                }
+            }
+
+            pom.withXml {
+                final dependenciesNode = asNode().appendNode('dependencies')
+                ext.addDependency = { Dependency dep, String scope ->
+                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+                        return // ignore invalid dependencies
+
+                    final dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dep.group)
+                    dependencyNode.appendNode('artifactId', dep.name)
+                    dependencyNode.appendNode('version', dep.version)
+                    dependencyNode.appendNode('scope', scope)
+
+                    if (!dep.transitive) {
+                        // If this dependency is transitive, we should force exclude all its dependencies them from the POM
+                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        exclusionNode.appendNode('groupId', '*')
+                        exclusionNode.appendNode('artifactId', '*')
+                    } else if (!dep.properties.excludeRules.empty) {
+                        // Otherwise add specified exclude rules
+                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        dep.properties.excludeRules.each { ExcludeRule rule ->
+                            exclusionNode.appendNode('groupId', rule.group ?: '*')
+                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                        }
+                    }
+                }
+
+                configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
+                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            if (!props.getProperty("batch.maven.central.release_repo_url", "").equals("")) {
+                url props.getProperty("batch.maven.central.release_repo_url", "")
+                credentials {
+                    username = props.getProperty("batch.maven.central.username", "")
+                    password = props.getProperty("batch.maven.central.password", "")
+                }
+            } else if (project.gradle.startParameter.taskNames.contains('publish')) {
+                logger.warn("WARNING: Could not get maven repository url, are you sure to have correctly setup " +
+                        propFile.path + " and " +
+                        signingFile.path + " ?")
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.firebasedispatcher
+}
+
+// Do not sign if we run the publishToMavenLocal task, useful for dev
+tasks.withType(Sign) {
+    onlyIf {
+        !project.gradle.startParameter.taskNames.contains('publishToMavenLocal') &&
+                !project.gradle.startParameter.taskNames.contains('sdk:publishToMavenLocal')
+    }
+}
+

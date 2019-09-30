@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+
+ext {
+    playServicesVersion = '11.8.0'
+    mavenGroupId = 'com.batch.android'
+    mavenArtifact = 'firebase-dispatcher'
+}
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                testLogging {
+                    events "started", "passed", "skipped", "failed"
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    api 'com.batch.android:batch-sdk:1.15.0'
+    api 'com.google.firebase:firebase-core:16.0.4'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation "com.google.firebase:firebase-analytics:$playServicesVersion"
+
+    // We use PowerMock to mock FirebaseAnalytics in tests
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.4'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.4'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.4'
+    testImplementation 'org.powermock:powermock-classloading-xstream:2.0.4'
+}
+
+apply from: 'maven-publish.gradle'
+apply from: 'jacoco.gradle'
