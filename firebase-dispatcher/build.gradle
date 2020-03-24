@@ -57,3 +57,4 @@ dependencies {
 
 apply from: 'maven-publish.gradle'
 apply from: 'jacoco.gradle'
+apply from: 'sonar.gradle'

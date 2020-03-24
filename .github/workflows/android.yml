@@ -1,12 +1,9 @@
 name: Android CI
-
 on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: set up JDK 1.8
@@ -15,6 +12,11 @@ jobs:
           java-version: 1.8
       - name: Run CI
         run: make ci
+      - name: Upload SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make sonar
       - name: Upload artifact
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1

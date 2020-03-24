@@ -1,5 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.batch.android/firebase-dispatcher/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.batch.android/firebase-dispatcher)
 [![Github Action](https://github.com/BatchLabs/android-firebase-dispatcher/workflows/Android%20CI/badge.svg)](https://github.com/BatchLabs/android-firebase-dispatcher/actions?query=workflow%3A%22Android+CI%22)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=BatchLabs_Batch-Android-firebase-dispatcher&metric=coverage)](https://sonarcloud.io/dashboard?id=BatchLabs_Batch-Android-firebase-dispatcher)
 
 Batch.com Android Firebase Dispatcher
 ==================
