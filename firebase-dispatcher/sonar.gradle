@@ -8,6 +8,8 @@ sonarqube {
         //    "$buildDir/intermediates/exploded-aar/**/classes.jar"
         // }
 
+        property "sonar.projectName", "Android Firebase Dispatcher"
+        property "sonar.projectDescription", "Batch.com's Android Firebase Dispatcher main artifact"
         property "sonar.projectKey", "BatchLabs_Batch-Android-firebase-dispatcher"
         property "sonar.projectVersion", project.android.defaultConfig.versionName
         property "sonar.organization", "batch"
