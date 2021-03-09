@@ -7,12 +7,11 @@ ext {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0.0"
 
@@ -38,7 +37,7 @@ android {
 }
 
 dependencies {
-    api 'com.batch.android:batch-sdk:1.15.0'
+    api 'com.batch.android:batch-sdk:1.17.0'
     api 'com.google.firebase:firebase-core:16.0.4'
 
     testImplementation 'junit:junit:4.12'
