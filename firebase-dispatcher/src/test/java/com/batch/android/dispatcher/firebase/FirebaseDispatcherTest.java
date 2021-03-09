@@ -295,8 +295,8 @@ public class FirebaseDispatcherTest
         expected.putString("batch_tracking_id", "jesuisunid");
         expected.putString("content", "jesuisuncontent");
 
-        firebaseDispatcher.dispatchEvent(Batch.EventDispatcher.Type.MESSAGING_CLOSE, payload);
-        Mockito.verify(firebase).logEvent(Mockito.eq("batch_in_app_close"), bundleEq(expected));
+        firebaseDispatcher.dispatchEvent(Batch.EventDispatcher.Type.MESSAGING_CLOSE_ERROR, payload);
+        Mockito.verify(firebase).logEvent(Mockito.eq("batch_in_app_close_error"), bundleEq(expected));
     }
 
     @Test
@@ -336,6 +336,25 @@ public class FirebaseDispatcherTest
     }
 
     @Test
+    public void testInAppWebView() {
+
+        TestEventPayload payload = new TestEventPayload(null,
+                "jesuisunbouton",
+                null,
+                new Bundle());
+
+        Bundle expected = new Bundle();
+        expected.putString("medium", "in-app");
+        expected.putString("source", "batch");
+        expected.putString("campaign", null);
+        expected.putString("batch_tracking_id", null);
+        expected.putString("batch_webview_analytics_id", "jesuisunbouton");
+
+        firebaseDispatcher.dispatchEvent(Batch.EventDispatcher.Type.MESSAGING_WEBVIEW_CLICK, payload);
+        Mockito.verify(firebase).logEvent(Mockito.eq("batch_in_app_webview_click"), bundleEq(expected));
+    }
+
+    @Test
     public void testInAppDeeplinkContentNoId() {
 
         TestEventPayload payload = new TestEventPayload(null,
@@ -357,12 +376,23 @@ public class FirebaseDispatcherTest
 
         private String trackingId;
         private String deeplink;
+        private String webViewAnalyticsID;
         private Bundle customPayload;
 
         TestEventPayload(String trackingId,
-                                String deeplink, Bundle customPayload)
+                         String deeplink,
+                         Bundle customPayload)
+        {
+            this(trackingId, null, deeplink, customPayload);
+        }
+
+        TestEventPayload(String trackingId,
+                         String webViewAnalyticsID,
+                         String deeplink,
+                         Bundle customPayload)
         {
             this.trackingId = trackingId;
+            this.webViewAnalyticsID = webViewAnalyticsID;
             this.deeplink = deeplink;
             this.customPayload = customPayload;
         }
@@ -372,6 +402,12 @@ public class FirebaseDispatcherTest
         public String getTrackingId()
         {
             return trackingId;
+        }
+
+        @Nullable
+        @Override
+        public String getWebViewAnalyticsID() {
+            return webViewAnalyticsID;
         }
 
         @Nullable
