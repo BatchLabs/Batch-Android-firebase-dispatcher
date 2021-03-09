@@ -30,4 +30,7 @@ lint:
 
 ci: clean lint test-coverage aar
 
-.PHONY: ci sonar check-token
+publish: aar
+	./gradlew firebase-dispatcher:publish
+
+.PHONY: ci sonar check-token publish aar
