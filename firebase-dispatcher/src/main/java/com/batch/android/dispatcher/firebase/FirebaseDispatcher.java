@@ -42,6 +42,8 @@ public class FirebaseDispatcher implements BatchEventDispatcher
      */
     private static final String BATCH_TRACKING_ID = "batch_tracking_id";
 
+    private static final String BATCH_WEBVIEW_ANALYTICS_ID = "batch_webview_analytics_id";
+
     /**
      * Event name used when logging on Firebase
      */
@@ -51,7 +53,9 @@ public class FirebaseDispatcher implements BatchEventDispatcher
     private static final String MESSAGING_SHOW_NAME = "batch_in_app_show";
     private static final String MESSAGING_CLOSE_NAME = "batch_in_app_close";
     private static final String MESSAGING_AUTO_CLOSE_NAME = "batch_in_app_auto_close";
+    private static final String MESSAGING_CLOSE_ERROR_NAME = "batch_in_app_close_error";
     private static final String MESSAGING_CLICK_NAME = "batch_in_app_click";
+    private static final String MESSAGING_WEBVIEW_CLICK_NAME = "batch_in_app_webview_click";
     private static final String UNKNOWN_EVENT_NAME = "batch_unknown";
 
     private FirebaseAnalytics firebaseAnalytics;
@@ -88,6 +92,11 @@ public class FirebaseDispatcher implements BatchEventDispatcher
         firebaseParams.putString(SOURCE, "batch");
         firebaseParams.putString(MEDIUM, "in-app");
         firebaseParams.putString(BATCH_TRACKING_ID, payload.getTrackingId());
+
+        String webViewAnalyticsId = payload.getWebViewAnalyticsID();
+        if (webViewAnalyticsId != null) {
+            firebaseParams.putString(BATCH_WEBVIEW_ANALYTICS_ID, webViewAnalyticsId);
+        }
 
         String deeplink = payload.getDeeplink();
         if (deeplink != null) {
@@ -207,8 +216,12 @@ public class FirebaseDispatcher implements BatchEventDispatcher
                 return MESSAGING_CLOSE_NAME;
             case MESSAGING_AUTO_CLOSE:
                 return MESSAGING_AUTO_CLOSE_NAME;
+            case MESSAGING_CLOSE_ERROR:
+                return MESSAGING_CLOSE_ERROR_NAME;
             case MESSAGING_CLICK:
                 return MESSAGING_CLICK_NAME;
+            case MESSAGING_WEBVIEW_CLICK:
+                return MESSAGING_WEBVIEW_CLICK_NAME;
         }
         return UNKNOWN_EVENT_NAME;
     }
