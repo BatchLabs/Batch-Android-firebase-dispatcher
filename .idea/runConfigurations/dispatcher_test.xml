@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="dispatcher-test" type="AndroidJUnit" factoryName="Android JUnit">
-    <module name="firebase-dispatcher" />
+    <module name="android-firebase-dispatcher.firebase-dispatcher" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.batch.android.dispatcher.firebase.*" />
