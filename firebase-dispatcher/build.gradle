@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    api 'com.batch.android:batch-sdk:1.17.0'
+    api 'com.batch.android:batch-sdk:1.19.0'
     api 'com.google.firebase:firebase-core:16.0.4'
 
     testImplementation 'junit:junit:4.12'
