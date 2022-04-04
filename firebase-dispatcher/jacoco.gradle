@@ -13,6 +13,7 @@ def offline_instrumented_outputDir = "$buildDir.path/intermediates/classes-instr
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
 }
 
 /* This task is used to create offline instrumentation of classes for on-the-fly instrumentation coverage tool like Jacoco. See jacoco classId
