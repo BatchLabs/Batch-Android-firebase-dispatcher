@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.batch.android.Batch;
 import com.batch.android.BatchEventDispatcher;
@@ -21,6 +22,13 @@ import java.util.Set;
  */
 public class FirebaseDispatcher implements BatchEventDispatcher
 {
+
+    /**
+     * Batch internal dispatcher information used for analytics
+     */
+    private static final String DISPATCHER_NAME = "firebase";
+    private static final int DISPATCHER_VERSION = 1;
+
     /**
      * Firebase UTM tag keys
      */
@@ -224,5 +232,16 @@ public class FirebaseDispatcher implements BatchEventDispatcher
                 return MESSAGING_WEBVIEW_CLICK_NAME;
         }
         return UNKNOWN_EVENT_NAME;
+    }
+
+    @Nullable
+    @Override
+    public String getName() {
+        return DISPATCHER_NAME;
+    }
+
+    @Override
+    public int getVersion() {
+        return DISPATCHER_VERSION;
     }
 }
