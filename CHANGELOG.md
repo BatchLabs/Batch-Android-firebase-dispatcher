@@ -1,3 +1,8 @@
+3.0.0
+-----
+
+* Bumps required Batch version to 1.19.0.
+
 2.0.0
 -----
 

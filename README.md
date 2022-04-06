@@ -13,7 +13,7 @@ A "ready-to-go" dispatcher that reflect event from the Batch SDK to the Firebase
 # Requirements
  - Android Studio 3.0+
  - Android 15+
- - Batch Android SDK 1.17.0+
+ - Batch Android SDK 1.19.0+
  - Firebase Analytics 16.0.4+
 
 # Installation
