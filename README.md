@@ -1,5 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.batch.android/firebase-dispatcher/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.batch.android/firebase-dispatcher)
-[![Github Action](https://github.com/BatchLabs/android-firebase-dispatcher/workflows/Android%20CI/badge.svg)](https://github.com/BatchLabs/android-firebase-dispatcher/actions?query=workflow%3A%22Android+CI%22)
+[![Github Action](https://github.com/BatchLabs/Batch-Android-firebase-dispatcher/workflows/Android%20CI/badge.svg)](https://github.com/BatchLabs/Batch-Android-firebase-dispatcher/actions?query=workflow%3A%22Android+CI%22)
 
 Batch.com Android Firebase Dispatcher
 ==================
@@ -20,7 +20,7 @@ A "ready-to-go" dispatcher that reflect event from the Batch SDK to the Firebase
 Gradle (recommended)
 
 ```
-implementation 'com.batch.android:firebase-dispatcher:2.0.0'
+implementation 'com.batch.android:firebase-dispatcher:3.0.0'
 ```
 
 Read our [setup documentation](https://doc.batch.com/) to follow a step by step tutorial for integrating Batch features into your app.
