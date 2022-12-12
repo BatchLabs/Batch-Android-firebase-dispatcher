@@ -20,7 +20,7 @@ A "ready-to-go" dispatcher that reflect event from the Batch SDK to the Firebase
 Gradle (recommended)
 
 ```
-implementation 'com.batch.android:firebase-dispatcher:3.0.0'
+implementation 'com.batch.android:firebase-dispatcher:3.0.1'
 ```
 
 Read our [setup documentation](https://doc.batch.com/) to follow a step by step tutorial for integrating Batch features into your app.
