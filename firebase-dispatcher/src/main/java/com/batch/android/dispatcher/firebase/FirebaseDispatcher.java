@@ -3,6 +3,7 @@ package com.batch.android.dispatcher.firebase;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -108,17 +109,22 @@ public class FirebaseDispatcher implements BatchEventDispatcher
 
         String deeplink = payload.getDeeplink();
         if (deeplink != null) {
-            deeplink = deeplink.trim();
-            Uri uri = Uri.parse(deeplink);
-
-            String fragment = uri.getFragment();
-            if (fragment != null && !fragment.isEmpty()) {
-                Map<String, String> fragments = getFragmentMap(fragment);
-                // Copy from fragment part of the deeplink
-                copyValueFromMap(fragments, UTM_CONTENT, firebaseParams, CONTENT);
+            try {
+                deeplink = deeplink.trim();
+                Uri uri = Uri.parse(deeplink);
+                if (uri.isHierarchical()) {
+                    String fragment = uri.getFragment();
+                    if (fragment != null && !fragment.isEmpty()) {
+                        Map<String, String> fragments = getFragmentMap(fragment);
+                        // Copy from fragment part of the deeplink
+                        copyValueFromMap(fragments, UTM_CONTENT, firebaseParams, CONTENT);
+                    }
+                    // Copy from query parameters of the deeplink
+                    copyValueFromQuery(uri, UTM_CONTENT, firebaseParams, CONTENT);
+                }
+            } catch (Exception e) {
+                Log.e("Batch", "Something went wrong parsing deeplink: " + e.getLocalizedMessage());
             }
-            // Copy from query parameters of the deeplink
-            copyValueFromQuery(uri, UTM_CONTENT, firebaseParams, CONTENT);
         }
         // Load from custom payload
         copyValueFromPayload(payload, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
@@ -135,24 +141,29 @@ public class FirebaseDispatcher implements BatchEventDispatcher
 
         String deeplink = payload.getDeeplink();
         if (deeplink != null) {
-            deeplink = deeplink.trim();
-            Uri uri = Uri.parse(deeplink);
+            try {
+                deeplink = deeplink.trim();
+                Uri uri = Uri.parse(deeplink);
+                if(uri.isHierarchical()) {
+                    String fragment = uri.getFragment();
+                    if (fragment != null && !fragment.isEmpty()) {
+                        Map<String, String> fragments = getFragmentMap(fragment);
+                        // Copy from fragment part of the deeplink
+                        copyValueFromMap(fragments, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
+                        copyValueFromMap(fragments, UTM_MEDIUM, firebaseParams, MEDIUM);
+                        copyValueFromMap(fragments, UTM_SOURCE, firebaseParams, SOURCE);
+                        copyValueFromMap(fragments, UTM_CONTENT, firebaseParams, CONTENT);
+                    }
 
-            String fragment = uri.getFragment();
-            if (fragment != null && !fragment.isEmpty()) {
-                Map<String, String> fragments = getFragmentMap(fragment);
-                // Copy from fragment part of the deeplink
-                copyValueFromMap(fragments, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
-                copyValueFromMap(fragments, UTM_MEDIUM, firebaseParams, MEDIUM);
-                copyValueFromMap(fragments, UTM_SOURCE, firebaseParams, SOURCE);
-                copyValueFromMap(fragments, UTM_CONTENT, firebaseParams, CONTENT);
+                    // Copy from query parameters of the deeplink
+                    copyValueFromQuery(uri, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
+                    copyValueFromQuery(uri, UTM_MEDIUM, firebaseParams, MEDIUM);
+                    copyValueFromQuery(uri, UTM_SOURCE, firebaseParams, SOURCE);
+                    copyValueFromQuery(uri, UTM_CONTENT, firebaseParams, CONTENT);
+                }
+            } catch (Exception e) {
+                Log.e("Batch", "Something went wrong parsing deeplink: " + e.getLocalizedMessage());
             }
-
-            // Copy from query parameters of the deeplink
-            copyValueFromQuery(uri, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
-            copyValueFromQuery(uri, UTM_MEDIUM, firebaseParams, MEDIUM);
-            copyValueFromQuery(uri, UTM_SOURCE, firebaseParams, SOURCE);
-            copyValueFromQuery(uri, UTM_CONTENT, firebaseParams, CONTENT);
         }
         // Load from custom payload
         copyValueFromPayload(payload, UTM_CAMPAIGN, firebaseParams, CAMPAIGN);
