@@ -1,4 +1,9 @@
-3.0.0
+3.0.1
+-----
+
+* Fixed an issue where Batch would crash when a non-hierarchical URI was parsed in a deeplink.
+
+`3.0.0
 -----
 
 * Bumps required Batch version to 1.19.0.
